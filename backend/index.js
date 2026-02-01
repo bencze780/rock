@@ -9,56 +9,42 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// 1. ELLENŐRIZD: A jelszó (password) XAMPP esetén gyakran üres string: ""
-// Ha a portod biztosan jó, akkor hagyd úgy, ahogy beállítottad.
+// Adatbázis konfiguráció
 const adatbazis = mysql.createConnection({
     host: 'localhost',
-    port: 3306,          // Ha nálad 3307 vagy más, írd át arra!
+    port: 3306,
     user: 'root',
-    password: 'root',    // TIPP: XAMPP-nál ez gyakran csak: ""
+    password: 'root', // TIPP: XAMPP-nál ez gyakran csak: ""
     database: 'rock_zenekarok_70s'
 });
 
 adatbazis.connect((err) => {
     if (err) {
-        console.error('------------------------------------------------');
-        console.error('Kritikus hiba az adatbázis kapcsolódásakor!');
-        console.error('Hiba kódja:', err.code);
-        console.error('Hiba üzenet:', err.sqlMessage);
-        console.error('------------------------------------------------');
+        if (process.env.NODE_ENV !== 'test') {
+            console.error('Kritikus hiba az adatbázis kapcsolódásakor:', err.sqlMessage);
+        }
         return;
     }
-    console.log('Sikeresen kapcsolódva az adatbázishoz.');
+    if (process.env.NODE_ENV !== 'test') {
+        console.log('Sikeresen kapcsolódva az adatbázishoz.');
+    }
 });
 
+// Végpontok
 app.get('/api/zenekar', (req, res) => {
     const sql = 'SELECT * FROM zenekarok';
     adatbazis.query(sql, (err, results) => {
-        if (err) {
-            console.error('Lekérdezési hiba:', err);
-            res.status(500).send('Hiba a lekérdezés során');
-            return;
-        }
+        if (err) return res.status(500).send('Hiba a lekérdezés során');
         res.json(results);
     });
 });
 
 app.post('/api/ujzenekar', (req, res) => {
-    // 1. Megnézzük, mit kapunk a Reacttól
-    console.log("Beérkező adatok:", req.body); 
-
     const {nev, stilus_id, orszag, varos, aktiv_evek, tagok, legsikeresebb_album, kep_url } = req.body;
-    
     const sql = 'INSERT INTO zenekarok (nev, stilus_id, orszag, varos, aktiv_evek, tagok, legsikeresebb_album, kep_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     
     adatbazis.query(sql, [nev, stilus_id, orszag, varos, aktiv_evek, tagok, legsikeresebb_album, kep_url], (err, results) => {
-        if (err) {
-            // 2. Kiírjuk a konkrét SQL hibát!
-            console.error("SQL Hiba történt:", err.sqlMessage); 
-            console.error("Hiba kód:", err.code);
-            res.status(500).send('Adatbázis hiba: ' + err.sqlMessage);
-            return;
-        }
+        if (err) return res.status(500).send('Adatbázis hiba: ' + err.sqlMessage);
         res.status(201).json({ id: results.insertId });
     });
 });
@@ -66,11 +52,7 @@ app.post('/api/ujzenekar', (req, res) => {
 app.get('/api/stilusok', (req, res) => {
     const sql = 'SELECT stilus_neve, id FROM stilusok';
     adatbazis.query(sql, (err, results) => {
-        if (err) {
-            console.error('Stílusok lekérdezési hiba:', err);
-            res.status(500).send('Hiba a lekérdezés során');
-            return;
-        }
+        if (err) return res.status(500).send('Hiba a lekérdezés során');
         res.json(results);
     });
 });
@@ -78,15 +60,17 @@ app.get('/api/stilusok', (req, res) => {
 app.delete('/api/zenekar/:id', (req, res) => {
     const sql = 'DELETE FROM zenekarok WHERE id = ?';
     adatbazis.query(sql, [req.params.id], (err, results) => {
-        if (err) {
-            console.error('Törlési hiba:', err);
-            res.status(500).send('Hiba a törlés során');
-            return;
-        }
+        if (err) return res.status(500).send('Hiba a törlés során');
         res.send('Sikeres törlés');
     });
 });
 
-app.listen(port, () => {
-    console.log(`Szerver fut a ${port} porton`);
-});
+// Fontos: Csak akkor indítsuk el a szervert, ha nem teszt üzemmódban vagyunk
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Szerver fut a ${port} porton`);
+    });
+}
+
+// Exportálás a tesztekhez
+module.exports = { app, adatbazis };

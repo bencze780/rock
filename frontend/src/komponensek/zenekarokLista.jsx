@@ -60,21 +60,21 @@ const ZenekarokLista = () => {
                         </span>
                     </div>
                     <div className="card-body">
-                        <p className="card-text"> 
+                        <div className="card-text"> 
                             <p>Származási helye: {zenekar.orszag}</p>
                             <p>Aktív évek: {zenekar.aktiv_evek}</p>
                             <p>Tagok: {zenekar.tagok}</p>
-                            <p>Legsikeresebb album: {zenekar.legsikeresebb_album}a</p>
+                            <p>Legsikeresebb album: {zenekar.legsikeresebb_album}</p>
                            
-                        </p>
+                        </div>
                     </div>
                     <img className="card-img-bottom p-2 img-fluid" alt="" src={zenekar.kep_url}/>
                     <div className="card-footer text-center">
                         <button 
-                            id="gomb" 
+                            id={`gomb-${zenekar.id}`} 
                             className="btn btn-outline-secondary px-4" 
                             onClick={() => {
-                                const currentYear = 2025;
+                                const currentYear = new Date().getFullYear();
                                 const [startYear, endYear] = zenekar.aktiv_evek.split('–').map(year => 
                                     year.trim() === 'napjainkig' ? currentYear : parseInt(year)
                                 );

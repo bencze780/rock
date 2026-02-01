@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szoftverfejlesztő Vizsga - Projektfeladat B</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Egyedi Chart Container Stílusok a követelmények szerint */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* max-w-xl / max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Dark background */
+            color: #f3f4f6;
+        }
+
+        /* Vibráló Paletta (Neon Rock Téma) */
+        .text-accent-blue { color: #38bdf8; }
+        .text-accent-pink { color: #f472b6; }
+        .bg-accent-blue { background-color: #38bdf8; }
+        .bg-accent-pink { background-color: #f472b6; }
+        .border-accent-blue { border-color: #38bdf8; }
+        
+        /* Kártya stílusok */
+        .info-card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            transition: transform 0.2s;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+
+        /* Folyamatábra nyilak CSS-sel (SVG nélkül) */
+        .arrow-down::after {
+            content: "▼";
+            display: block;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #4b5563;
+            margin: 1rem 0;
+        }
+        @media (min-width: 768px) {
+            .arrow-right::after {
+                content: "▶";
+                position: absolute;
+                right: -1.5rem;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 1.5rem;
+                color: #4b5563;
+            }
+            .arrow-down::after {
+                content: ""; /* Mobilon lefele, asztalin jobbra */
+                display: none;
+            }
+        }
+    </style>
+    <!-- HTML Comment: Palette Selection - "Vibrant Dark/Neon" based on exam theme (Rock bands). 
+         Colors: Slate-900 (bg), Slate-800 (cards), Sky-400 (primary accent), Pink-400 (secondary accent). -->
+    <!-- HTML Comment: Narrative Plan 
+         1. Intro: Exam Context (Time, Role).
+         2. Overview Chart: Points breakdown to emphasize priorities.
+         3. Data Structure: The core of the task (DB Schema).
+         4. Workflow: Step-by-step logic (Console -> Backend -> Frontend).
+         5. API Detail: Specific requirements for the Node.js backend.
+         6. Frontend Detail: Visual requirements for the web app.
+         7. Conclusion: Success criteria.
+    -->
+</head>
+<body class="antialiased">
+
+    <!-- HERO SECTION -->
+    <header class="w-full bg-gradient-to-r from-slate-900 to-slate-800 border-b border-gray-700 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-pink-400">
+                    Szoftverfejlesztő Szakmai Vizsga
+                </span>
+            </h1>
+            <h2 class="text-2xl font-semibold text-gray-300 mb-6">Projektfeladat B: Asztali- és Webes Szoftverfejlesztés</h2>
+            <div class="flex flex-wrap justify-center gap-4 text-sm font-medium">
+                <span class="bg-gray-700 px-4 py-2 rounded-full border border-gray-600">⏱️ Időtartam: 240 perc</span>
+                <span class="bg-gray-700 px-4 py-2 rounded-full border border-gray-600">📅 Dátum: 2025. május 20.</span>
+                <span class="bg-gray-700 px-4 py-2 rounded-full border border-gray-600">🏆 Összpontszám: 65 pont</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- SECTION 1: INTRODUCTION & CONTEXT -->
+        <section>
+            <div class="prose prose-invert max-w-none text-center mb-10">
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+                    A vizsgafeladat célja egy komplex szoftverrendszer megvalósítása, amely az <strong>1970-es évek legendás rockzenekarainak</strong> adatait kezeli. 
+                    A projekt során bizonyítanod kell tudásodat az adatbázis-kezelés, backend API fejlesztés, asztali alkalmazások (Console/GUI) és a reszponzív webfejlesztés területén.
+                </p>
+            </div>
+
+            <!-- KEY METRICS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="info-card p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-accent-blue mb-2">15p</div>
+                    <div class="text-gray-400 font-semibold">Backend API</div>
+                    <p class="text-xs text-gray-500 mt-2">Node.js + MySQL</p>
+                </div>
+                <div class="info-card p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-accent-pink mb-2">25p</div>
+                    <div class="text-gray-400 font-semibold">Frontend Web</div>
+                    <p class="text-xs text-gray-500 mt-2">HTML, CSS, JS/React</p>
+                </div>
+                <div class="info-card p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-white mb-2">25p</div>
+                    <div class="text-gray-400 font-semibold">Asztali App</div>
+                    <p class="text-xs text-gray-500 mt-2">Console + GUI</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: POINTS DISTRIBUTION CHART -->
+        <!-- HTML Comment: Data Point: Exam Points -> Goal: Compare -> Visualization: Doughnut Chart -> Justification: Shows the proportion of effort required for each module. No SVG used. -->
+        <section class="bg-slate-800/50 rounded-2xl p-8 border border-gray-700">
+            <h3 class="text-2xl font-bold mb-4 text-white border-l-4 border-accent-blue pl-4">Pontszámok Eloszlása</h3>
+            <p class="text-gray-300 mb-8">
+                Az alábbi diagram szemlélteti, hogyan oszlanak meg az elérhető pontok az egyes részfeladatok között. 
+                Látható, hogy a webes fejlesztés (Backend + Frontend) teszi ki a vizsga súlypontját.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="chart-container">
+                    <canvas id="pointsChart"></canvas>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-4 bg-slate-900 rounded-lg border-l-4 border-blue-500">
+                        <h4 class="font-bold text-white">1. Asztali (15p)</h4>
+                        <p class="text-sm text-gray-400">Konzolos adatfeldolgozás, OOP, fájlbeolvasás.</p>
+                    </div>
+                    <div class="p-4 bg-slate-900 rounded-lg border-l-4 border-purple-500">
+                        <h4 class="font-bold text-white">2. Grafikus (10p)</h4>
+                        <p class="text-sm text-gray-400">WPF/WinForms felület, képmegjelenítés, aktív évek számítása.</p>
+                    </div>
+                    <div class="p-4 bg-slate-900 rounded-lg border-l-4 border-pink-500">
+                        <h4 class="font-bold text-white">3. Webfejlesztés (40p)</h4>
+                        <p class="text-sm text-gray-400">Backend API végpontok és reszponzív Frontend felület.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: DATA STRUCTURE -->
+        <!-- HTML Comment: Data Point: DB Schema -> Goal: Relationships -> Visualization: Styled HTML Cards (No Mermaid) -> Justification: Clearly shows 1:N relationship. -->
+        <section>
+            <h3 class="text-2xl font-bold mb-6 text-white border-l-4 border-accent-pink pl-4">Adatbázis Szerkezet</h3>
+            <p class="text-gray-300 mb-8">
+                A rendszer alapja a <code class="bg-gray-800 px-2 py-1 rounded text-accent-blue">rock_zenekarok_70s</code> adatbázis. 
+                A kapcsolat típusa <strong>1:N</strong> (Egy stílushoz több zenekar tartozik).
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
+                <!-- Table Card: Stilusok -->
+                <div class="w-full max-w-xs info-card rounded-lg overflow-hidden shadow-lg relative">
+                    <div class="bg-gray-700 p-3 font-bold text-center border-b border-gray-600">stilusok</div>
+                    <div class="p-4 space-y-2 font-mono text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-yellow-400">🔑 id (PK)</span>
+                            <span class="text-gray-500">int</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-2">
+                            <span class="text-white">stilus_neve</span>
+                            <span class="text-gray-500">varchar</span>
+                        </div>
+                    </div>
+                    <!-- Connector Line Visual (CSS only) -->
+                    <div class="hidden md:block absolute top-1/2 -right-16 w-16 h-0.5 bg-gray-500"></div>
+                    <div class="hidden md:block absolute top-1/2 -right-2 w-2 h-2 bg-gray-500 rounded-full"></div>
+                </div>
+
+                <!-- Table Card: Zenekarok -->
+                <div class="w-full max-w-xs info-card rounded-lg overflow-hidden shadow-lg border-2 border-accent-blue">
+                    <div class="bg-accent-blue text-slate-900 p-3 font-bold text-center">zenekarok</div>
+                    <div class="p-4 space-y-2 font-mono text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-yellow-400">🔑 id (PK)</span>
+                            <span class="text-gray-500">int</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-1">
+                            <span class="text-white">nev</span>
+                            <span class="text-gray-500">varchar</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-1 bg-gray-800/50 -mx-4 px-4 py-1">
+                            <span class="text-accent-blue font-bold">🔗 stilus_id (FK)</span>
+                            <span class="text-gray-500">int</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-1">
+                            <span class="text-white">orszag / varos</span>
+                            <span class="text-gray-500">varchar</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-1">
+                            <span class="text-white">aktiv_evek</span>
+                            <span class="text-gray-500">varchar</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-1">
+                            <span class="text-white">kep_url</span>
+                            <span class="text-gray-500">text</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: BACKEND API REQUIREMENTS -->
+        <!-- HTML Comment: Data Point: Endpoints -> Goal: Organize -> Visualization: Table -> Justification: Clear listing of specs. -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-white border-l-4 border-accent-blue pl-4">Backend API (Node.js)</h3>
+                <p class="text-gray-300 mb-6">
+                    A szervernek REST API végpontokon keresztül kell kiszolgálnia a kéréseket. 
+                    A válaszok formátuma minden esetben <strong>JSON</strong>.
+                </p>
+                <div class="overflow-hidden rounded-lg border border-gray-700">
+                    <table class="min-w-full bg-slate-800 text-sm text-left">
+                        <thead class="bg-slate-700 text-gray-200 uppercase font-bold">
+                            <tr>
+                                <th class="px-4 py-3">Metódus</th>
+                                <th class="px-4 py-3">Végpont</th>
+                                <th class="px-4 py-3">Leírás</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <tr class="hover:bg-slate-700/50">
+                                <td class="px-4 py-3 text-green-400 font-mono font-bold">GET</td>
+                                <td class="px-4 py-3 font-mono">/zenekar</td>
+                                <td class="px-4 py-3">Összes zenekar listázása teljes adattartalommal.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-700/50">
+                                <td class="px-4 py-3 text-green-400 font-mono font-bold">GET</td>
+                                <td class="px-4 py-3 font-mono">/stilusok</td>
+                                <td class="px-4 py-3">Zenei stílusok listája (legördülő menühöz).</td>
+                            </tr>
+                            <tr class="hover:bg-slate-700/50">
+                                <td class="px-4 py-3 text-yellow-400 font-mono font-bold">POST</td>
+                                <td class="px-4 py-3 font-mono">/ujzenekar</td>
+                                <td class="px-4 py-3">Új zenekar felvétele. Siker esetén <span class="text-accent-blue">201 Created</span>.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-700/50">
+                                <td class="px-4 py-3 text-red-400 font-mono font-bold">DELETE</td>
+                                <td class="px-4 py-3 font-mono">/zenekartorlese</td>
+                                <td class="px-4 py-3">Zenekar törlése ID alapján.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Frontend Logic Visualization -->
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-white border-l-4 border-accent-pink pl-4">Frontend Logika</h3>
+                <p class="text-gray-300 mb-6">
+                    A weboldalnak reszponzívnak kell lennie (Bootstrap/Tailwind). Kiemelt logikai feladat az "Aktív évek" számítása.
+                </p>
+                
+                <div class="info-card p-6 rounded-xl">
+                    <h4 class="font-bold text-lg text-white mb-4">🧮 Aktív Évek Számítása</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-gray-700 p-3 rounded font-mono text-sm text-yellow-300 w-32 text-center">"1970-1991"</div>
+                            <div class="text-2xl">→</div>
+                            <div class="text-gray-300">
+                                <span class="font-bold">21 év</span><br>
+                                <span class="text-xs text-gray-500">(Vég - Kezdet)</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-gray-700 p-3 rounded font-mono text-sm text-green-300 w-32 text-center">"1973-napjainkig"</div>
+                            <div class="text-2xl">→</div>
+                            <div class="text-gray-300">
+                                <span class="font-bold">52 év</span><br>
+                                <span class="text-xs text-gray-500">(2025 - Kezdet)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-slate-900/50 p-3 rounded text-sm text-gray-400 border border-gray-700">
+                        ⚠️ <strong>Fontos:</strong> Ha a zenekar még aktív ("napjainkig"), akkor a vizsga dátumát (2025) kell alapul venni a kivonáshoz!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-gray-700 pt-8 pb-4 text-center">
+            <p class="text-gray-500 text-sm">
+                Szoftverfejlesztő és -tesztelő szakma | 5 0613 12 03 <br>
+                Sok sikert a vizsgához! 🎸
+            </p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Chart.js Implementation
+        // Mandatory: Label wrapping logic and Tooltip callback configuration
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('pointsChart').getContext('2d');
+            
+            // Raw Labels
+            const rawLabels = [
+                "Asztali Alkalmazás (Konzol) - 15 pont",
+                "Asztali Alkalmazás (Grafikus) - 10 pont",
+                "Backend API Fejlesztés - 15 pont",
+                "Frontend Webfejlesztés - 25 pont"
+            ];
+
+            // 1. Label Wrapping Logic (16 chars max per line)
+            const processLabel = (label) => {
+                if (label.length <= 16) return label;
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = words[0];
+
+                for (let i = 1; i < words.length; i++) {
+                    if ((currentLine + " " + words[i]).length <= 16) {
+                        currentLine += " " + words[i];
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            };
+
+            const wrappedLabels = rawLabels.map(processLabel);
+
+            // Chart Configuration
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: wrappedLabels,
+                    datasets: [{
+                        label: 'Pontszám',
+                        data: [15, 10, 15, 25], // Points from exam description
+                        backgroundColor: [
+                            '#64748b', // Slate-500 (Console)
+                            '#a855f7', // Purple-500 (GUI)
+                            '#38bdf8', // Sky-400 (Backend)
+                            '#f472b6'  // Pink-400 (Frontend)
+                        ],
+                        borderColor: '#111827', // Match bg
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#d1d5db', // Gray-300
+                                font: { family: 'Inter', size: 12 }
+                            }
+                        },
+                        // 2. Mandatory Tooltip Configuration
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#f3f4f6',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                        return label.join(' ');
+                                    } else {
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
